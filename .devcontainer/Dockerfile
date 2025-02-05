@@ -1,10 +1,8 @@
 FROM node:23.6-bullseye-slim as node 
 FROM rust:1.84-slim-bullseye as rust
 
-FROM debian:bullseye-20250113
+FROM mcr.microsoft.com/vscode/devcontainers/base:bullseye
 
-# 環境変数の設定
-ENV DEBIAN_FRONTEND=noninteractive
 
 # ユーザー設定の引数
 ARG USER_NAME=utakata
@@ -15,25 +13,39 @@ ARG GROUP_ID=1100
 RUN groupadd -g ${GROUP_ID} ${USER_NAME} && \
     useradd --create-home --uid ${USER_ID} --gid ${GROUP_ID} --shell /bin/bash ${USER_NAME}
 
-RUN apt-get update && apt-get install -y \
+ENV DISPLAY=:1
+
+RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
+    && apt-get -y install --no-install-recommends \
+    # https://tauri.app/v1/guides/getting-started/prerequisites#1-system-dependencies
+    libwebkit2gtk-4.0-dev \
     build-essential \
     curl \
-    pkg-config \
-    libwebkit2gtk-4.1-dev \
-    curl \
     wget \
-    file \
-    libxdo-dev \
     libssl-dev \
+    libgtk-3-dev \
     libayatana-appindicator3-dev \
     librsvg2-dev \
-    && apt-get clean -y && rm -rf /var/lib/apt/lists/*
+    # GUI
+    lxde \
+    # TigerVNC
+    tigervnc-standalone-server \
+    tigervnc-common \
+    tigervnc-tools \
+    # noVNC
+    novnc \
+    websockify \
+    # other
+    file \ 
+    pkg-config \
+    && apt clean -y && rm -rf /var/lib/apt/lists/*
 
 # Rustのインストール
 COPY --from=rust /usr/local/cargo /usr/local/cargo
 COPY --from=rust /usr/local/rustup /usr/local/rustup
 ENV PATH $PATH:/usr/local/cargo/bin/
 ENV RUSTUP_HOME /usr/local/rustup
+ENV CARGO_HOME=/usr/local/cargo
 
 # Node.jsのインストール
 COPY --from=node /usr/local/bin/node /usr/local/bin/node
@@ -52,24 +64,8 @@ RUN curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
 # コンテナ内の作業ユーザーを設定
 USER ${USER_NAME}
 
-RUN echo "source /usr/share/bash-completion/completions/git" >> ~/.bashrc
-
-WORKDIR /usr/share/bash-completion/completions
-
-RUN curl -O https://raw.githubusercontent.com/git/git/master/contrib/completion/git-prompt.sh
-RUN curl -O https://raw.githubusercontent.com/git/git/master/contrib/completion/git-completion.bash
-RUN chmod a+x git*.*
-RUN ls -l $PWD/git*.* | awk '{print "source "$9}' >> ~/.bashrc
-
-RUN echo "GIT_PS1_SHOWDIRTYSTATE=true" >> ~/.bashrc
-RUN echo "GIT_PS1_SHOWUNTRACKEDFILES=true" >> ~/.bashrc
-RUN echo "GIT_PS1_SHOWUPSTREAM=auto" >> ~/.bashrc
-
-RUN echo 'export PS1="\[\033[01;32m\]\u@\h\[\033[01;33m\] \w \[\033[01;31m\]\$(__git_ps1 \"(%s)\") \\n\[\033[01;34m\]\\$ \[\033[00m\]"' >> ~/.bashrc
-
 WORKDIR /workspace
 RUN chown -R ${USER_ID}:${GROUP_ID} /workspace
-
 
 # 確認用シェル
 SHELL ["/bin/bash", "-c"]

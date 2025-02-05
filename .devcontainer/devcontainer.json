@@ -2,21 +2,10 @@
     "name": "Tauri Dev Container Enviroment",
     "build": {
         "dockerfile": "Dockerfile",
-        "context": "..",
+        "context": ".."
     },
+    "forwardPorts": [6080],
     "init": true,
-    "features": {
-        "ghcr.io/devcontainers/features/desktop-lite:1": {
-            "version": "latest",
-            "noVncVersion": "1.2.0",
-            "password": "vscode",
-            "webPort": 6080,
-            "vncPort": 5901
-        }
-    },
-    "forwardPorts": [
-        6080
-    ],
     "customizations": {
         "vscode": {
             "extensions": [
@@ -26,7 +15,7 @@
             ]
         }
     },
-    "remoteUser": "utakata",
+    "remoteUser": "vscode",
     "workspaceFolder": "/workspace",
-    "workspaceMount": "source={localWorkspaceFolder},target=/workspace,type=bind,consistency=cached",
+    "workspaceMount": "source=${localWorkspaceFolder}/workspace,target=/workspace,type=bind,consistency=cached"
 }
