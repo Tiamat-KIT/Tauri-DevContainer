@@ -4,7 +4,7 @@
         "dockerfile": "Dockerfile",
         "context": ".."
     },
-    "forwardPorts": [],
+    "forwardPorts": [6080],
     "init": true,
     "customizations": {
         "vscode": {
