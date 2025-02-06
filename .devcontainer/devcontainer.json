@@ -15,7 +15,7 @@
             ]
         }
     },
-    "remoteUser": "vscode",
+    "remoteUser": "utakata",
     "workspaceFolder": "/workspace",
     "workspaceMount": "source=${localWorkspaceFolder}/workspace,target=/workspace,type=bind,consistency=cached"
 }
