@@ -1,4 +1,4 @@
-import OpenAI from "openai";
+// import OpenAI from "openai";
 import gpt from "./gpt/client";
 
 export default async function PdfToResponseGenerate(file: File) {

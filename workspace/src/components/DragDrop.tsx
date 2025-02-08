@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import * as pdfjsLib from "pdfjs-dist";
 import QuestionGenerator from "../utils/gpt-client";
-import markdownit from 'markdown-it'
+// import markdownit from 'markdown-it'
 import Modal from "./Modal";
 
 
@@ -18,7 +18,7 @@ export default function DragDrop(
       ).toString();
 
     // PDFのテキストを抽出する関数
-    const extractTextFromPDF = async (file: File) => {
+    /* const extractTextFromPDF = async (file: File) => {
         const reader = new FileReader();
         reader.readAsArrayBuffer(file);
 
@@ -45,7 +45,7 @@ export default function DragDrop(
                 reject(new Error("PDFの読み込みに失敗しました"));
             };
         });
-    };
+    }; */
 
     // PDFファイルを処理する関数
     const handleFile = async (file: File) => {
